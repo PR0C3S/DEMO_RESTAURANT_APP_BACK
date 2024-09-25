@@ -1,0 +1,28 @@
+services:
+  app_restaurant:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db_restaurant
+      DB_PORT: 3306
+      DB_NAME: restaurant
+      DB_USERNAME: root
+      DB_PASSWORD: john
+      restart: always
+    depends_on:
+      db_restaurant:
+        condition: service_healthy
+  db_restaurant:
+    image: 'mysql:latest'
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: restaurant
+      MYSQL_PASSWORD: john
+      MYSQL_ROOT_PASSWORD: john
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
